@@ -1,5 +1,5 @@
-import React from "react";
-import { FlatList } from 'react-native';
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, StyleSheet, RefreshControl} from 'react-native';
 import PalettePreview from "../components/PalettePreview";
 
 const SOLARIZED = [
@@ -44,10 +44,37 @@ const COLOR_PALETTES = [
     { paletteName: 'Rainbow', colors: RAINBOW },
 ];
 
+
+
 const Home = ({ navigation }) =>{
+    
+    const [colorPalettes, setColorPalette] = useState([]);
+    const [isRefreshing, setIsRefresing ] = useState(false);
+
+    const handleFetchColorPalette = useCallback(async () =>{
+        const result = await fetch('https://color-palette-api.kadikraman.vercel.app/palettes');
+        if(result.ok){
+            const palettes = await result.json();
+            setColorPalette(palettes);
+        }
+    }, []);
+
+    useEffect(()=>{
+        handleFetchColorPalette();
+    }, []);
+
+    const handleRefresh = useCallback(async()=>{
+        setIsRefresing(true);
+        await  handleFetchColorPalette();
+        setTimeout(() =>{
+            setIsRefresing(false);
+        }, 500);
+    }, []);
+
     return(
         <FlatList
-            data={COLOR_PALETTES}
+            style={styles.list}
+            data={colorPalettes}
             keyExtractor={item =>item.paletteName}
             renderItem={({ item }) => (
                 <PalettePreview 
@@ -57,9 +84,18 @@ const Home = ({ navigation }) =>{
                     colorPalette={item}
                 />
             )}
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+                    
         />
     )   
 };
+
+const styles = StyleSheet.create({
+    list: {
+        padding: 10,
+    },
+});
 
 export default Home;
 

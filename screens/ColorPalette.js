@@ -9,12 +9,12 @@ const ColorPalette = ({route}) =>{
     return(
         <SafeAreaView >
             <FlatList // *1
-            style={styles.container}
-            data={route.params.colors} // *2
-            keyExtractor={item => item.colorName}// *3
-            renderItem={({ item }) => <ColorBox colorName={item.colorName} hexCode={item.hexCode}/>} // *4
-            ListHeaderComponent={<Text style={styles.title}>{route.params.paletteName}</Text>}
-            />
+              style={styles.container}
+              data={route.params.colors} // *2
+              keyExtractor={item => item.colorName}// *3
+              renderItem={({ item }) => <ColorBox colorName={item.colorName} hexCode={item.hexCode}/>} // *4
+              ListHeaderComponent={<Text style={styles.title}>{route.params.paletteName}</Text>}
+              />
         </SafeAreaView>
     );
 };
